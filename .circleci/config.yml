@@ -11,7 +11,7 @@ jobs:
       - image: cimg/node:14.15.2-browsers
     #Docker image where our code will be run.
     environment:
-      - CHROME_BIN: /usr/bin/google-chrome-stable
+  #    - CHROME_BIN: /usr/bin/google-chrome-stable
     steps:
       - checkout
       - restore_cache:
