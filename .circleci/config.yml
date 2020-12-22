@@ -1,0 +1,28 @@
+version: 2
+#The version key enables us to specifies that we are using CircleCI 2.0.
+#orbs:
+#  firebase-deploy: azdevs/firebase-deploy@1.0.0
+#Shareable package of parametrizable reusable configuration elements, including jobs, commands, and executors, for deploying on firebase hosting.
+jobs:
+  build:
+    working_directory: ~/my-project
+    #Directory to run the steps. Will be interpreted as an absolute path.
+    docker:
+      - image: cimg/node:14.15.2-browsers
+    #Docker image where our code will be run.
+    steps:
+      - checkout
+      - restore_cache:
+          #instructs CircleCI to restore any previously installed dependencies.
+          key: v1-dependencies-{{ checksum "package.json" }}
+      - run: npm install
+      #install dependencies
+      - save_cache:
+          #save the dependencies after installing them.
+          key: v1-npm-deps-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
+      - run: xvfb-run -a npm run test -- --single-run --no-progress --browser=ChromeNoSandbox
+      - run: xvfb-run -a npm run e2e -- --no-progress --config=protractor-ci.conf.js
+      - run: npm build
+      - run: ./node_modules/.bin/firebase deploy --token "$FIREBASE_TOKEN" --only hosting
