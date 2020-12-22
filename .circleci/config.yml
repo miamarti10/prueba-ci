@@ -10,6 +10,8 @@ jobs:
     docker:
       - image: cimg/node:14.15.2-browsers
     #Docker image where our code will be run.
+    environment:
+      - CHROME_BIN: /usr/bin/google-chrome-stable
     steps:
       - checkout
       - restore_cache:
@@ -22,7 +24,7 @@ jobs:
           key: v1-npm-deps-{{ checksum "package.json" }}
           paths:
             - ./node_modules
-      - run: npm run test
-      - run: npm run e2e 
+      - run: ng test --browsers ChromeNoSandbox
+      - run: npm run e2e
       - run: npm build
       - run: ./node_modules/.bin/firebase deploy --token "$FIREBASE_TOKEN" --only hosting
