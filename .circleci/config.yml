@@ -22,7 +22,7 @@ jobs:
           key: v1-npm-deps-{{ checksum "package.json" }}
           paths:
             - ./node_modules
-      - run: npm run test -- --single-run --no-progress --browser=ChromeNoSandbox
+      - run: npm run test -- --no-progress --browser=ChromeNoSandbox
       - run: npm run e2e -- --no-progress --config=protractor-ci.conf.js
       - run: npm build
       - run: ./node_modules/.bin/firebase deploy --token "$FIREBASE_TOKEN" --only hosting
